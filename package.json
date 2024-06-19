@@ -12,15 +12,20 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.6",
-    "vue": "^3.4.21"
+    "@vuepic/vue-datepicker": "^8.8.0",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.2",
+    "vuetify": "^3.6.8"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
     "@rushstack/eslint-patch": "^1.8.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vue/eslint-config-prettier": "^9.0.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
+    "font-awesome": "^4.7.0",
     "prettier": "^3.2.5",
     "vite": "^5.2.8"
   }
