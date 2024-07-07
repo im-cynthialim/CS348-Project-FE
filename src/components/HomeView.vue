@@ -99,7 +99,7 @@
               </div>
                <div class="pa-3">
                   <div class="text-h6">Preferred Lot Locations</div>
-                  <Map class="mx-auto mt-0 pb-2"></Map>
+                  <MapView class="mx-auto mt-0 pb-2"></MapView>
               </div>
             </v-card>
           </div>
@@ -119,10 +119,10 @@ import { ref } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-import Map from './Map.vue'
+import MapView from './MapView.vue'
 
 export default {
-  components: { VueDatePicker, Map },
+  components: { VueDatePicker, MapView },
   setup() {
 
     const startDate = ref(new Date())
