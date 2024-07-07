@@ -17,6 +17,7 @@ import router from './router'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 
+
 //Components
 const vuetify = createVuetify({
   components,
@@ -37,9 +38,3 @@ app.use(vuetify)
 app.use(router)
 
 app.mount('#app')
-
-new Vue({
-  el: '#app',
-
-  render: (h) => h(App)
-})
