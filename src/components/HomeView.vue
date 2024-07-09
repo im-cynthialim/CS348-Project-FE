@@ -42,7 +42,12 @@
               {{ booking.details }}
             </div>
           </v-card>
-          <v-btn class="mb-8 rounded-b-lg rounded-0 black-button" variant="tonal" block @click="cancelBooking(booking)">
+          <v-btn
+            class="mb-8 rounded-b-lg rounded-0 black-button"
+            variant="tonal"
+            block
+            @click="cancelBooking(booking)"
+          >
             Cancel
           </v-btn>
         </div>
@@ -208,7 +213,7 @@ export default {
         endDate: 'July 11, 2024',
         startTime: '3:00',
         endTime: '5:00'
-      },
+      }
     ],
     selected: []
   }),
@@ -236,9 +241,9 @@ export default {
           uid: 2,
           bid: booking.bid
         })
-        .then(console.log("Booking cancelled successfully"))
+        .then(console.log('Booking cancelled successfully'))
         .catch((err) => {
-          console.log(err);
+          console.log(err)
         })
     }
   }
