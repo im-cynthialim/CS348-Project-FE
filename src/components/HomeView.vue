@@ -50,7 +50,7 @@
 
         <div class="d-flex flex-row">
           <div>
-            <v-card variant="outlined" class="pa-4 mb-10" width="700" height="750">
+            <v-card variant="outlined" class="pa-4 mb-10" width="700" height="800">
               <!-- permit spot end date can't be more than 7 days from today-->
               <div class="pa-4 d-flex flex-row">
                 <div>
@@ -137,15 +137,19 @@
                 <div class="text-h6">Preferred Lot Locations</div>
                 <MapView class="mx-auto mt-0 pb-2"></MapView>
               </div>
+                 <v-btn class="mb-8 rounded-lg black-button" variant="tonal" @click="navBooking()" block>
+        Find available lots
+      </v-btn>
             </v-card>
+            
           </div>
+          
         </div>
+      
       </v-card>
     </div>
     <div>
-      <v-btn class="mb-8 rounded-lg black-button" variant="tonal" @click="navBooking()" block>
-        Find available lots
-      </v-btn>
+     
     </div>
   </div>
 </template>
