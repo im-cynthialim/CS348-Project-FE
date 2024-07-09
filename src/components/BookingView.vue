@@ -70,12 +70,12 @@
 
         <div v-else class="d-flex ga-3 mb-6 justify-center">
           <div>
-            <p>{{ startDate }}</p>
+            <p class="text-center">{{ startDate }}</p>
             <p class="text-center">{{ startTimeHours }}:{{ startTimeMinutes }}</p>
           </div>
           <p class="font-weight-bold">Until</p>
           <div>
-            <p>{{ endDate }}</p>
+            <p class="text-center">{{ endDate }}</p>
             <p class="text-center">{{ endTimeHours }}:{{ endTimeMinutes }}</p>
           </div>
         </div>
@@ -156,30 +156,30 @@ export default {
 
   methods: {
     makeBooking() {
-      const parseStart = this.startDate.split(' ');
-      const parseEnd = this.endDate.split(' ');
+      const parseStart = this.startDate.split(' ')
+      const parseEnd = this.endDate.split(' ')
 
-      api.post('makeBooking', {
-        uid: this.$route.query.uid,
-        lid: this.selectedLot.lid,
-        sid: this.chosenSpot,
-        startYear: parseStart[2],
-        startMonth: new Date(`${parseStart[0]} ${parseStart[1]}, ${parseStart[2]}`).getMonth()+1,
-        startDate: parseStart[1],
-        startHour: this.startTimeHours,
-        startMinute: this.startTimeMinutes,
-        endYear: parseEnd[2],
-        endMonth: new Date(`${parseEnd[0]} ${parseEnd[1]}, ${parseEnd[2]}`).getMonth()+1,
-        endDate: parseEnd[1],
-        endHour: this.endTimeHours,
-        endMinute: this.endTimeMinutes
-      })
-      .then(
-        console.log("Success")
-      )
-      .catch((err) => {
-        console.log(err);
-      })
+      api
+        .post('makeBooking', {
+          uid: this.$route.query.uid,
+          lid: this.selectedLot.lid,
+          sid: this.chosenSpot,
+          startYear: parseStart[2],
+          startMonth:
+            new Date(`${parseStart[0]} ${parseStart[1]}, ${parseStart[2]}`).getMonth() + 1,
+          startDate: parseStart[1],
+          startHour: this.startTimeHours,
+          startMinute: this.startTimeMinutes,
+          endYear: parseEnd[2],
+          endMonth: new Date(`${parseEnd[0]} ${parseEnd[1]}, ${parseEnd[2]}`).getMonth() + 1,
+          endDate: parseEnd[1],
+          endHour: this.endTimeHours,
+          endMinute: this.endTimeMinutes
+        })
+        .then(console.log('Success'))
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 }

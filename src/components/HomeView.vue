@@ -18,29 +18,31 @@
       @click="logOut()"
     ></v-btn>
     <div class="d-flex">
-      <v-card variant="text" class="px-16">
+      <v-card variant="text" class="px-16 overflow-y-auto" height="850">
         <div class="text-h6 font-weight-bold mb-2">Upcoming</div>
-        <!-- <template v-for="name in testArray" :key="name"> -->
-        <div v-for="name in testArray" class="" :key="name">
+        <div v-for="booking in upcomingBookings" :key="booking.bid">
           <v-card
             class="d-flex flex-column pa-6 rounded-t-lg rounded-0 upcoming-bookings"
             variant="outlined"
           >
-            <!-- <v-card class="d-flex flex-column pa-8 rounded-t-xl rounded-0 upcoming-bookings" variant="outlined"> -->
-            <div>
-              {{ name.name }}
+            <div class="mb-1 d-flex justify-space-between">
+              <p class="font-weight-bold text-decoration-underline">{{ booking.name }}</p>
+            </div>
+
+            <div class="mb-1">
+              <p class="font-weight-bold">Start</p>
+              {{ booking.startDate }} {{ booking.startTime }}
+            </div>
+            <div class="mb-1">
+              <p class="font-weight-bold">End</p>
+              {{ booking.endDate }} {{ booking.endTime }}
             </div>
             <div>
-              {{ name.address }}
-            </div>
-            <div>
-              {{ name.details }}
-            </div>
-            <div>
-              {{ name.date }}
+              <p class="font-weight-bold">Additional Details</p>
+              {{ booking.details }}
             </div>
           </v-card>
-          <v-btn class="mb-8 rounded-b-lg rounded-0 black-button" variant="tonal" block>
+          <v-btn class="mb-8 rounded-b-lg rounded-0 black-button" variant="tonal" block @click="cancelBooking(booking)">
             Cancel
           </v-btn>
         </div>
@@ -137,20 +139,20 @@
                 <div class="text-h6">Preferred Lot Locations</div>
                 <MapView class="mx-auto mt-0 pb-2"></MapView>
               </div>
-                 <v-btn class="mb-8 rounded-lg black-button" variant="tonal" @click="navBooking()" block>
-        Find available lots
-      </v-btn>
+              <v-btn
+                class="mb-8 rounded-lg black-button"
+                variant="tonal"
+                @click="navBooking()"
+                block
+              >
+                Find available lots
+              </v-btn>
             </v-card>
-            
           </div>
-          
         </div>
-      
       </v-card>
     </div>
-    <div>
-     
-    </div>
+    <div></div>
   </div>
 </template>
 
@@ -160,6 +162,8 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 import MapView from './MapView.vue'
+
+import api from '../../axiosconfig'
 
 export default {
   components: { VueDatePicker, MapView },
@@ -186,14 +190,25 @@ export default {
     }
   },
   data: () => ({
-    testArray: [
+    upcomingBookings: [
       {
-        name: 'test',
-        location: 'address',
-        details: 'free',
-        date: 'may 31st'
+        bid: 2,
+        name: 'DC',
+        details: 'Free',
+        startDate: 'July 8, 2024',
+        endDate: 'July 9, 2024',
+        startTime: '2:00',
+        endTime: '4:00'
       },
-      { name: 'test', location: 'address', details: 'free', date: 'may 31st' }
+      {
+        bid: 3,
+        name: 'QNC',
+        details: 'Free',
+        startDate: 'July 10, 2024',
+        endDate: 'July 11, 2024',
+        startTime: '3:00',
+        endTime: '5:00'
+      },
     ],
     selected: []
   }),
@@ -214,6 +229,17 @@ export default {
           uid: 1 //TBD
         }
       })
+    },
+    cancelBooking(booking) {
+      api
+        .delete('cancelBooking', {
+          uid: 2,
+          bid: booking.bid
+        })
+        .then(console.log("Booking cancelled successfully"))
+        .catch((err) => {
+          console.log(err);
+        })
     }
   }
 }
