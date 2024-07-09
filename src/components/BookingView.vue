@@ -10,7 +10,7 @@
     ></v-btn>
 
     <div class="d-flex flex-row h-100">
-      <v-card variant="text" class="mr-10">
+      <v-card variant="text" class="mr-10" width="1000">
         <div class="text-h6 font-weight-bold">Available Lots</div>
         <div class="text-body font-italic mb-5">
           Search through available lots and book a specific spot
@@ -142,7 +142,7 @@ export default {
         name: 'DWE',
         lid: 3,
         spots: 7,
-        description: '2 hour max stay'
+        description: '$5 per entry'
       }
     ],
     startDate: '',
