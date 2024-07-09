@@ -6,7 +6,7 @@
       size="x-large"
       color="black"
       icon="fa: fas fa-arrow-right fa-rotate-180"
-      @click="this.$router.push('/')"
+      @click="this.$router.push('/home')"
     ></v-btn>
 
     <div class="d-flex flex-row h-100">

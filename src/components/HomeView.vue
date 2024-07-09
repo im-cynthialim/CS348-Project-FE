@@ -15,7 +15,7 @@
       size="x-large"
       color="#3170D5"
       icon="fa: fas fa-sign-out fa-rotate-180"
-      @click="logOut()"
+      @click="this.$router.push('/')"
     ></v-btn>
     <div class="d-flex">
       <v-card variant="text" class="px-16 overflow-y-auto" height="850">
