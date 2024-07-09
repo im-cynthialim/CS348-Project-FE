@@ -17,8 +17,8 @@
             <v-list width="500">
               <v-list-item
                 class="pa-5 border-sm"
-                v-for="(booking, i) in testHistory"
-                :key="i"
+                v-for="booking in bookingHistory"
+                :key="booking.bid"
                 :value="booking"
               >
                 <div class="d-flex flex-row justify-space-between">
@@ -74,69 +74,23 @@
 <script>
 import unliked from '../assets/images/heart-regular.svg'
 import liked from '../assets/images/heart-solid.svg'
+import api from '../../axiosconfig'
 
 export default {
   data: () => ({
     bookingHistory: [],
     unliked: unliked,
     liked: liked,
-    testHistory: [
-      {
-        area: 'UW',
-        address: 'XXX',
-        lotName: 'DC',
-        parkingType: 'pay',
-        startTime: '2024-06-15T19:30:00.000+00:00',
-        endTime: '2024-06-15T22:30:00.000+00:00',
-        price: 15.0,
-        status: 'expired',
-        liked: false
-      },
-      {
-        area: 'UW',
-        address: 'XXX',
-        lotName: 'DWE',
-        parkingType: 'free',
-        startTime: '2024-06-15T19:30:00.000+00:00',
-        endTime: '2024-06-15T20:30:00.000+00:00',
-        price: 0.0,
-        status: 'expired',
-        liked: false
-      },
-      {
-        area: 'UW',
-        address: 'XXX',
-        lotName: 'SCH',
-        parkingType: 'pay',
-        startTime: '2024-06-15T19:30:00.000+00:00',
-        endTime: '2024-06-15T20:30:00.000+00:00',
-        price: 3.0,
-        status: 'cancelled',
-        liked: false
-      },
-      {
-        area: 'UW',
-        address: 'XXX',
-        lotName: 'SCH',
-        parkingType: 'pay',
-        startTime: '2024-07-09T16:30:00.000+00:00',
-        endTime: '2024-07-09T19:30:00.000+00:00',
-        price: 3.0,
-        status: 'cancelled',
-        liked: false
-      }
-    ]
   }),
-  computed: {},
+  mounted() {
+      api.post('bookingHistory',
+      {
+        uid: 4,
+      }).then((res) => {
+        this.bookingHistory = res.data.filter((booking) => booking.status != "booked");
+      })
+  },
   methods: {
-    listBookingHistory() {
-      api.get('/listBookingHistory'),
-        {
-          uid: 4
-        }.then((res) => {
-          this.bookingHistory = res
-        })
-    },
     formatDate(dateString) {
       const date = new Date(dateString)
       const options = { year: 'numeric', month: 'long', day: '2-digit' }

@@ -26,20 +26,20 @@
             variant="outlined"
           >
             <div class="mb-1 d-flex justify-space-between">
-              <p class="font-weight-bold text-decoration-underline">{{ booking.name }}</p>
+              <p class="font-weight-bold text-decoration-underline"> {{ booking.lotName }}</p>
             </div>
 
             <div class="mb-1">
               <p class="font-weight-bold">Start</p>
-              {{ booking.startDate }} {{ booking.startTime }}
+              {{ formatDate(booking.startTime) }} {{ formatTime(booking.startTime) }}
             </div>
             <div class="mb-1">
               <p class="font-weight-bold">End</p>
-              {{ booking.endDate }} {{ booking.endTime }}
+               {{ formatDate(booking.endTime) }} {{ formatTime(booking.endTime) }}
             </div>
             <div>
               <p class="font-weight-bold">Additional Details</p>
-              {{ booking.details }}
+              {{ booking.price == '0' ? 'Free' : '$' + booking.price }}
             </div>
           </v-card>
           <v-btn
@@ -195,28 +195,17 @@ export default {
     }
   },
   data: () => ({
-    upcomingBookings: [
-      {
-        bid: 2,
-        name: 'DC',
-        details: 'Free',
-        startDate: 'July 8, 2024',
-        endDate: 'July 9, 2024',
-        startTime: '2:00',
-        endTime: '4:00'
-      },
-      {
-        bid: 3,
-        name: 'QNC',
-        details: 'Free',
-        startDate: 'July 10, 2024',
-        endDate: 'July 11, 2024',
-        startTime: '3:00',
-        endTime: '5:00'
-      }
-    ],
-    selected: []
+    selected: [],
+    upcomingBookings: []
   }),
+  mounted() {
+    api.post('bookingHistory',
+      {
+        uid: 4,
+      }).then((res) => {
+        this.upcomingBookings = res.data;
+      })
+  },
   methods: {
     navProfile() {
       this.$router.push('/profile')
@@ -231,21 +220,30 @@ export default {
           startTimeMinutes: this.startTime.minutes,
           endTimeHours: this.endTime.hours,
           endTimeMinutes: this.endTime.minutes,
-          uid: 1 //TBD
+          uid: 4 //TBD
         }
       })
     },
     cancelBooking(booking) {
       api
-        .delete('cancelBooking', {
-          uid: 2,
-          bid: booking.bid
+        .delete(`cancelBooking?uid=4&bid=${booking.bid}`, {
         })
         .then(console.log('Booking cancelled successfully'))
         .catch((err) => {
           console.log(err)
         })
+    },
+     formatDate(dateString) {
+      const date = new Date(dateString)
+      const options = { year: 'numeric', month: 'long', day: '2-digit' }
+      return date.toLocaleDateString('en-US', options)
+    },
+    formatTime(dateString) {
+      const date = new Date(dateString)
+      const options = { hour: '2-digit', minute: '2-digit', hour12: false }
+      return date.toLocaleTimeString('en-US', options)
     }
+   
   }
 }
 </script>
