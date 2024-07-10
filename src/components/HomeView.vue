@@ -201,10 +201,7 @@ export default {
   }),
   mounted() {
     api
-      .post('bookingHistory', {
-        uid: 4,
-        upcomingOnly: true
-      })
+      .get('upcomingBookings?uid=4')
       .then((res) => {
         this.upcomingBookings = res.data
         this.countBookings = res.data.length
