@@ -96,9 +96,12 @@
           {{ selectedLot.description }}
         </div>
 
-        <v-btn class="mb-8 black-button" variant="tonal" @click="makeBooking()" block>
+        <v-btn class="mb-8 black-button" variant="tonal" @click.prevent="makeBooking()" block>
           Confirm Booking
         </v-btn>
+        <p v-show="maxBookings" class="text-red font-weight-bold">
+          Booking not completed - You have reached your maximum number of bookings!
+        </p>
       </v-card>
     </div>
   </div>
@@ -109,6 +112,7 @@ import api from '../../axiosconfig'
 
 export default {
   mounted() {
+    this.countBookings = parseInt(this.$route.query.countBookings, 10)
     this.startDate = this.$route.query.startDate
     this.startTimeHours = this.$route.query.startTimeHours
     this.startTimeMinutes =
@@ -125,6 +129,7 @@ export default {
   },
   data: () => ({
     selectedLot: 1,
+    countBookings: 0,
     items: [
       {
         name: 'DC',
@@ -151,7 +156,8 @@ export default {
     endDate: '',
     endTimeHours: '',
     endTimeMinutes: '',
-    chosenSpot: ''
+    chosenSpot: '',
+    maxBookings: false
   }),
 
   methods: {
@@ -159,27 +165,32 @@ export default {
       const parseStart = this.startDate.split(' ')
       const parseEnd = this.endDate.split(' ')
 
-      api
-        .post('makeBooking', {
-          uid: this.$route.query.uid,
-          lid: this.selectedLot.lid,
-          sid: this.chosenSpot,
-          startYear: parseStart[2],
-          startMonth:
-            new Date(`${parseStart[0]} ${parseStart[1]}, ${parseStart[2]}`).getMonth() + 1,
-          startDate: parseStart[1],
-          startHour: this.startTimeHours,
-          startMinute: this.startTimeMinutes,
-          endYear: parseEnd[2],
-          endMonth: new Date(`${parseEnd[0]} ${parseEnd[1]}, ${parseEnd[2]}`).getMonth() + 1,
-          endDate: parseEnd[1],
-          endHour: this.endTimeHours,
-          endMinute: this.endTimeMinutes
-        })
-        .then(console.log('Success'))
-        .catch((err) => {
-          console.log(err)
-        })
+      if (this.countBookings + 1 <= 3) {
+        api
+          .post('makeBooking', {
+            uid: this.$route.query.uid,
+            lid: this.selectedLot.lid,
+            sid: this.chosenSpot,
+            startYear: parseStart[2],
+            startMonth:
+              new Date(`${parseStart[0]} ${parseStart[1]}, ${parseStart[2]}`).getMonth() + 1,
+            startDate: parseStart[1],
+            startHour: this.startTimeHours,
+            startMinute: this.startTimeMinutes,
+            endYear: parseEnd[2],
+            endMonth: new Date(`${parseEnd[0]} ${parseEnd[1]}, ${parseEnd[2]}`).getMonth() + 1,
+            endDate: parseEnd[1],
+            endHour: this.endTimeHours,
+            endMinute: this.endTimeMinutes
+          })
+          .then(console.log('Success'))
+          .catch((err) => {
+            console.log(err)
+          })
+      }
+      else {
+        this.maxBookings = true;
+      }
     }
   }
 }

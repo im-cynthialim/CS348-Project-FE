@@ -26,7 +26,7 @@
             variant="outlined"
           >
             <div class="mb-1 d-flex justify-space-between">
-              <p class="font-weight-bold text-decoration-underline"> {{ booking.lotName }}</p>
+              <p class="font-weight-bold text-decoration-underline">{{ booking.lotName }}</p>
             </div>
 
             <div class="mb-1">
@@ -35,7 +35,7 @@
             </div>
             <div class="mb-1">
               <p class="font-weight-bold">End</p>
-               {{ formatDate(booking.endTime) }} {{ formatTime(booking.endTime) }}
+              {{ formatDate(booking.endTime) }} {{ formatTime(booking.endTime) }}
             </div>
             <div>
               <p class="font-weight-bold">Additional Details</p>
@@ -196,14 +196,18 @@ export default {
   },
   data: () => ({
     selected: [],
-    upcomingBookings: []
+    upcomingBookings: [],
+    countBookings: 0
   }),
   mounted() {
-    api.post('bookingHistory',
-      {
+    api
+      .post('bookingHistory', {
         uid: 4,
-      }).then((res) => {
-        this.upcomingBookings = res.data;
+        upcomingOnly: true
+      })
+      .then((res) => {
+        this.upcomingBookings = res.data
+        this.countBookings = res.data.length
       })
   },
   methods: {
@@ -220,20 +224,20 @@ export default {
           startTimeMinutes: this.startTime.minutes,
           endTimeHours: this.endTime.hours,
           endTimeMinutes: this.endTime.minutes,
+          countBookings: this.countBookings,
           uid: 4 //TBD
         }
       })
     },
     cancelBooking(booking) {
       api
-        .delete(`cancelBooking?uid=4&bid=${booking.bid}`, {
-        })
+        .delete(`cancelBooking?uid=4&bid=${booking.bid}`, {})
         .then(console.log('Booking cancelled successfully'))
         .catch((err) => {
           console.log(err)
         })
     },
-     formatDate(dateString) {
+    formatDate(dateString) {
       const date = new Date(dateString)
       const options = { year: 'numeric', month: 'long', day: '2-digit' }
       return date.toLocaleDateString('en-US', options)
@@ -243,7 +247,6 @@ export default {
       const options = { hour: '2-digit', minute: '2-digit', hour12: false }
       return date.toLocaleTimeString('en-US', options)
     }
-   
   }
 }
 </script>
