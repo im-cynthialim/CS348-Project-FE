@@ -3,68 +3,74 @@
     <p class="text-h3 font-weight-bold text-center mt-16 pt-16 mb-16">Welcome.</p>
 
     <v-card class="card-margin pa-16 pb-8" variant="text">
-      <div class="text-subtitle-1 text-medium-emphasis d-flex">Email</div>
+      <div class="text-subtitle-1 text-medium-emphasis d-flex">Username</div>
 
       <v-text-field
         class="pt-2 mb-8"
-        v-model="email"
-        placeholder="Email"
+        v-model="username"
+        placeholder="Username"
         variant="outlined"
-        hide-details
-        required
       ></v-text-field>
 
       <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
         Password
 
-        <a
+        <!-- <a
           class="text-caption text-decoration-none text-blue"
           href="#"
           rel="noopener noreferrer"
           target="_blank"
         >
           Forgot login password?</a
-        >
+        > -->
       </div>
 
       <v-text-field
         v-model="password"
-        class="pt-2 mb-8"
+        class="pt-2"
         :append-inner-icon="show1 ? 'fa-eye' : 'fa-eye-slash'"
-        :rules="[rules.required]"
         :type="show1 ? 'text' : 'password'"
         variant="outlined"
         placeholder="Password"
         @click:append-inner="show1 = !show1"
       ></v-text-field>
-
-      <v-btn class="mb-8 black-button" size="large" variant="tonal" block @click="load">
+      <div class="mb-6 text-center text-red" :style="{visibility: this.errorMsg ? 'visible' : 'hidden' }"> Incorrect username or password </div>
+      <v-btn class="mb-8 black-button" size="large" variant="tonal" block @click="checkLogin()">
         Log In
       </v-btn>
 
       <v-card-text class="text-blue text-center" @click="navUserCreation()">
-          Sign up now <v-icon icon="mdi-chevron-right"></v-icon>
+        Sign up now <v-icon icon="mdi-chevron-right"></v-icon>
       </v-card-text>
     </v-card>
   </div>
 </template>
 
 <script>
+
+import api from '../../axiosconfig'
+
 export default {
   data() {
     return {
       show1: false,
       show2: true,
-      password: '',
+      username: "admin01",
+      password: "iamadmin",
+      errorMsg: false,
       rules: {
         required: (value) => !!value || 'Required.',
-        emailMatch: () => `The email and password you entered don't match`
       }
     }
   },
   methods: {
-    load() {
-      this.$router.push('/home')
+    checkLogin() {
+      api.get(`login?username=${this.username}&password=${this.password}`).then((res) => {
+        sessionStorage.setItem('uid', JSON.stringify(res.data.uid));
+        this.$router.push('/home')
+      }).catch(() => {
+        this.errorMsg = true;
+      })
     },
     navUserCreation() {
       this.$router.push('/new-user')

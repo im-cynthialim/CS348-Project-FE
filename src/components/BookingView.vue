@@ -163,6 +163,7 @@ export default {
             uid: this.$route.query.uid,
             lid: this.selectedLot.lid,
             sid: this.chosenSpot.sid,
+            price: this.chosenSpot.price,
             startYear: parseStart[2],
             startMonth:
               new Date(`${parseStart[0]} ${parseStart[1]}, ${parseStart[2]}`).getMonth() + 1,

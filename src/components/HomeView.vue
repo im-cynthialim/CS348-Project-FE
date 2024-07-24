@@ -18,7 +18,7 @@
       @click="this.$router.push('/')"
     ></v-btn>
     <div class="d-flex">
-      <v-card variant="text" class="px-16 overflow-y-auto" height="850">
+      <v-card variant="text" class="px-16 overflow-y-auto" width="378" height="850">
         <div class="text-h6 font-weight-bold mb-2">Upcoming</div>
         <div v-for="booking in upcomingBookings" :key="booking.bid">
           <v-card
@@ -141,23 +141,24 @@
                 </div>
               </div>
                <v-checkbox
-                class="align-end d-flex"
+                class="align-end d-flex pl-3"
                 v-model="freeLots"
                 color="#4285F4"
                 label="Free parking only"
+                density="compact"
               ></v-checkbox>
-              <div class="pa-3">
+              <div class="pa-3 pb-0">
                 <div class="text-h6">Preferred Lot Locations</div>
                 <MapView @update-preferred="updatePreferred" class="mx-auto mt-0 pb-2"></MapView>
               </div>
-              <div v-show="errorMsg" class="text-red font-weight-bold text-center"> {{errorMsg}}</div>  
-              
+              <div :style="{visibility: this.errorMsg ? 'visible' : 'hidden'}" class="text-red font-weight-bold text-center"> {{errorMsg}}</div>  
               <v-btn
                 class="mb-8 rounded-lg black-button"
                 variant="tonal"
                 @click="navBooking()"
                 block
               >
+              
                 Find available lots
               </v-btn>
               
@@ -210,16 +211,25 @@ export default {
     preferredLots: [],
     errorMsg: null,
     freeLots: false,
+    uid: null,
   }),
   mounted() {
-    api
-      .get('upcomingBookings?uid=4')
+    
+    if (sessionStorage.getItem('uid')) { // get uid of session
+      this.uid = JSON.parse(sessionStorage.getItem('uid'))
+    }
+    this.listUpcomingBookings();
+
+  },
+  methods: {
+    listUpcomingBookings() {
+               api
+      .get(`upcomingBookings?uid=${this.uid}`)
       .then((res) => {
         this.upcomingBookings = res.data
         this.countBookings = res.data.length
       })
-  },
-  methods: {
+    },
     updatePreferred(data) {
       this.preferredLots = data;
     },
@@ -228,7 +238,7 @@ export default {
     },
     navBooking() {
       api.post('listAvailableSpots', {
-          "uid": 1,
+          "uid": this.uid,
           "location": this.preferredLots,
           "freeOnly": this.freeLots,
           "startYear": `${this.startDate.getFullYear()}`,
@@ -246,7 +256,7 @@ export default {
           this.$router.push({
             path: '/booking',
             query:{
-              uid: 1,
+              uid: this.uid,
               availableLots: JSON.stringify(res.data),
               startDate: `${this.startDate.toLocaleString('en-us', { month: 'long' })} ${this.startDate.getDate()} ${this.startDate.getFullYear()}`,
               endDate: `${this.endDate.toLocaleString('en-us', { month: 'long' })} ${this.endDate.getDate()} ${this.endDate.getFullYear()}`,
@@ -268,8 +278,8 @@ export default {
     },
     cancelBooking(booking) {
       api
-        .delete(`cancelBooking?uid=4&bid=${booking.bid}`, {})
-        .then(console.log('Booking cancelled successfully'))
+        .delete(`cancelBooking?uid=${this.uid}&bid=${booking.bid}`, {})
+        .then(this.listUpcomingBookings())
         .catch((err) => {
           console.log(err)
         })
