@@ -42,15 +42,8 @@
         Log In
       </v-btn>
 
-      <v-card-text class="text-center">
-        <a
-          class="text-blue text-decoration-none"
-          href="#"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
+      <v-card-text class="text-blue text-center" @click="navUserCreation()">
           Sign up now <v-icon icon="mdi-chevron-right"></v-icon>
-        </a>
       </v-card-text>
     </v-card>
   </div>
@@ -72,6 +65,9 @@ export default {
   methods: {
     load() {
       this.$router.push('/home')
+    },
+    navUserCreation() {
+      this.$router.push('/new-user')
     }
   }
 }
