@@ -111,6 +111,7 @@
           <p class="font-weight-bold mb-1">Additional Details</p>
             <p v-show="`${chosenSpot.parkingType}` == 'pay'"> Price: ${{chosenSpot.price}} </p>
             <p v-show="`${chosenSpot.parkingType}` == 'free'"> Free </p>
+            <p v-show="`${chosenSpot.address}` != 'XXX'"> {{chosenSpot.address}} </p>
         </div>
         <div v-if="this.errorMsg" class="text-red font-weight-bold text-center"> This spot has been booked by another user - try again later </div>  
         <v-btn class="mb-8 black-button" variant="tonal" @click="makeBooking()" block>

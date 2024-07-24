@@ -66,7 +66,7 @@ export default {
   methods: {
     checkLogin() {
       api.get(`login?username=${this.username}&password=${this.password}`).then((res) => {
-        sessionStorage.setItem('uid', JSON.stringify(res.data.uid));
+        sessionStorage.setItem('uid', JSON.stringify(res.data.uid)); // create user session
         this.$router.push('/home')
       }).catch(() => {
         this.errorMsg = true;
