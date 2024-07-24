@@ -24,7 +24,7 @@
               :value="item"
               @click="
                 selectedLot = item;
-                chosenSpot = ''
+                chosenSpot = '';
               "
             >
               <v-list-item-title v-text="item.lot_name"></v-list-item-title>
@@ -44,7 +44,7 @@
       <div class="d-flex">
         <v-card variant="outlined" class="pa-4 mb-10" width="700" height="750">
           <v-container>
-            <v-row justify="center" v-for="n in selectedLot.spots" :key="n">
+            <v-row justify="center" v-for="n in selectedLot.spots" :key="n" @click="errorMsg = false">
               <v-col v-if="!n.available" cols="6"> <!--already taken spot-->
                 <v-sheet 
                   class="pa-4 bg-blue-grey-lighten-4 d-flex align-center justify-center"
@@ -112,15 +112,13 @@
             <p v-show="`${chosenSpot.parkingType}` == 'pay'"> Price: ${{chosenSpot.price}} </p>
             <p v-show="`${chosenSpot.parkingType}` == 'free'"> Free </p>
         </div>
-        <div :style="{visibility: this.errorMsg ? 'visible' : 'hidden'}" class="text-red font-weight-bold text-center"> {{errorMsg}}</div>  
-        <v-btn class="mb-8 black-button" variant="tonal" @click="makeBooking()"  @mouseout="errorMsg = null"  block>
+        <div v-if="this.errorMsg" class="text-red font-weight-bold text-center"> This spot has been booked by another user - try again later </div>  
+        <v-btn class="mb-8 black-button" variant="tonal" @click="makeBooking()" block>
           Confirm Booking
         </v-btn>
 
         <div :style="{visibility: this.validBooking ? 'visible' : 'hidden'}" class="text-green font-weight-bold text-center"> {{validBooking}}</div>  
-        <!-- <p v-show="maxBookings" class="text-red font-weight-bold">
-          Booking not completed - You have reached your maximum number of bookings!
-        </p> -->
+     
       </v-card>
     </div>
   </div>
@@ -143,7 +141,7 @@ export default {
     endTimeMinutes: '',
     chosenSpot: '',
     maxBookings: false,
-    errorMsg: null,
+    errorMsg: false,
     validBooking: null,
   }),
     created() {
@@ -193,16 +191,11 @@ export default {
           )
           .catch((err) => {
             if (err.response.status === 406) {
-              this.errorMsg = "This spot has been booked by another user - try again later";
+              this.errorMsg = true;
             }
           
           })
     },
-    watch: {
-      chosenSpot() {
-      this.errorMsg = null;
-    }
-    }
   },
 
 }
