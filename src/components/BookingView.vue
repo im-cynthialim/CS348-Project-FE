@@ -27,7 +27,15 @@
                 chosenSpot = ''
               "
             >
-              <v-list-item-title v-text="item.likeNum"></v-list-item-title>
+              <v-list-item-title v-text="item.lot_name"></v-list-item-title>
+             <div class="position-absolute mr-8 mt-3 " style="right: 0; top: 0;">  {{item.likeNum}}
+              <img
+              class="position-absolute pl-2" style="margin-top: 6px;"
+                      width="20"
+                      src="../assets/images/heart-solid.svg"
+                      @click="booking.liked = true"
+                    />
+            </div>
             </v-list-item>
           </v-list>
         </v-card>
@@ -91,7 +99,7 @@
         <div class="d-flex ga-3">
           <div style="width: 50px; height: 70px">
             <p class="font-weight-bold">Lot</p>
-            <p>{{ selectedLot.name }}</p>
+            <p>{{ selectedLot.lot_name }}</p>
           </div>
           <div class="text-center 50px;">
             <p class="font-weight-bold">Spot</p>
@@ -104,13 +112,15 @@
             <p v-show="`${chosenSpot.parkingType}` == 'pay'"> Price: ${{chosenSpot.price}} </p>
             <p v-show="`${chosenSpot.parkingType}` == 'free'"> Free </p>
         </div>
-
-        <v-btn class="mb-8 black-button" variant="tonal" @click.prevent="makeBooking()" block>
+        <div :style="{visibility: this.errorMsg ? 'visible' : 'hidden'}" class="text-red font-weight-bold text-center"> {{errorMsg}}</div>  
+        <v-btn class="mb-8 black-button" variant="tonal" @click="makeBooking()"  @mouseout="errorMsg = null"  block>
           Confirm Booking
         </v-btn>
-        <p v-show="maxBookings" class="text-red font-weight-bold">
+
+        <div :style="{visibility: this.validBooking ? 'visible' : 'hidden'}" class="text-green font-weight-bold text-center"> {{validBooking}}</div>  
+        <!-- <p v-show="maxBookings" class="text-red font-weight-bold">
           Booking not completed - You have reached your maximum number of bookings!
-        </p>
+        </p> -->
       </v-card>
     </div>
   </div>
@@ -132,7 +142,9 @@ export default {
     endTimeHours: '',
     endTimeMinutes: '',
     chosenSpot: '',
-    maxBookings: false
+    maxBookings: false,
+    errorMsg: null,
+    validBooking: null,
   }),
     created() {
     const data = JSON.parse(this.$route.query.availableLots);
@@ -157,7 +169,6 @@ export default {
       const parseStart = this.startDate.split(' ')
       const parseEnd = this.endDate.split(' ')
 
-      // if (this.countBookings + 1 <= 3) {
         api
           .post('makeBooking', {
             uid: this.$route.query.uid,
@@ -176,15 +187,22 @@ export default {
             endHour: this.endTimeHours,
             endMinute: this.endTimeMinutes
           })
-          .then(console.log('Success'))
+          .then(() => {
+            this.validBooking = "Booking successful!";
+          }
+          )
           .catch((err) => {
-            console.log(err)
+            if (err.response.status === 406) {
+              this.errorMsg = "This spot has been booked by another user - try again later";
+            }
+          
           })
-      // }
-      // else {
-      //   this.maxBookings = true;
-      // }
     },
+    watch: {
+      chosenSpot() {
+      this.errorMsg = null;
+    }
+    }
   },
 
 }
