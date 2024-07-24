@@ -12,6 +12,14 @@
       <v-card variant="text">
         <div class="text-h4 font-weight-bold mb-2">Booking History</div>
 
+      <v-select
+        class="mx-auto"
+        max-width="500"
+        label="Sort by"
+        :items="['None', 'Price', 'Likes']"
+        variant="underlined"
+        v-model="sort"
+        ></v-select>
         <v-card variant="text">
           <v-card class="mx-auto overflow-y-auto" variant="text" style="height: 850px">
             <v-list width="500">
@@ -26,20 +34,21 @@
                     {{ booking.lotName }}
                   </div>
 
-                  <div class="d-flex flex-row ga-3 align-center">
+                  <div class="d-flex flex-row align-center">
                     <div
-                      class="px-2"
+                      class="px-2 mr-3"
                       :class="booking.status == 'expired' ? 'cancelled' : 'expired'"
                     >
                       {{ booking.status == 'expired' ? 'completed' : booking.status }}
                     </div>
+                    <div v-if="booking.liked" class="mr-2"> {{booking.likeNum}} </div>
 
                     <img
                       v-if="booking.status == 'expired'"
                       style="right: 0; top: 0"
                       width="20"
                       :src="booking.liked ? liked : unliked"
-                      @click="booking.liked = true"
+                      @click="likeLot(booking.lid)"
                     />
                   </div>
                 </div>
@@ -56,7 +65,8 @@
                   </div>
                   <div>
                     <p class="font-weight-bold">Additional Details</p>
-                    <p>{{ booking.price == '0' ? 'Free' : '$' + booking.price }}</p>
+                    <p>{{ booking.parkingType == 'free' ? 'Free' : '$' + booking.price }}</p>
+                    {{uid}}
                   </div>
                 </div>
               </v-list-item>
@@ -78,17 +88,12 @@ export default {
     bookingHistory: [],
     unliked: unliked,
     liked: liked,
-    uid: null
+    uid: null,
+    sort: null
   }),
   mounted() {
-  
-    api
-      .post('bookingHistory', {
-        uid: JSON.parse(sessionStorage.getItem('uid'))
-      })
-      .then((res) => {
-        this.bookingHistory = res.data.filter((booking) => booking.status != 'booked')
-      })
+
+    this.listBookingHistory();
   },
   methods: {
     formatDate(dateString) {
@@ -100,7 +105,30 @@ export default {
       const date = new Date(dateString)
       const options = { hour: '2-digit', minute: '2-digit', hour12: false }
       return date.toLocaleTimeString('en-US', options)
+    },
+    listBookingHistory(){
+      api
+      .post('bookingHistory', {
+        uid: JSON.parse(sessionStorage.getItem('uid')),
+        priceDesc: this.sort == 'Price' ? true : false,
+        likeNumDesc: this.sort == 'Likes' ? true : false
+      })
+      .then((res) => {
+        this.bookingHistory = res.data.filter((booking) => booking.status != 'booked')
+      })
+    },
+    likeLot(lid) {
+      api.post(`likeLot?uid=${JSON.parse(sessionStorage.getItem('uid'))}&lid=${lid}`)
+      .then(() => {
+      this.listBookingHistory()
+    });
     }
+  },
+  watch: {
+    sort() {
+      this.bookingHistory = [];
+      this.listBookingHistory();
+    },
   }
 }
 </script>
