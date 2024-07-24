@@ -44,7 +44,7 @@
       <div class="d-flex">
         <v-card variant="outlined" class="pa-4 mb-10" width="700" height="750">
           <v-container>
-            <v-row justify="center" v-for="n in selectedLot.spots" :key="n" @click="errorMsg = false">
+            <v-row justify="center" v-for="n in selectedLot.spots" :key="n" @click="errorMsg = false; validBooking = false">
               <v-col v-if="!n.available" cols="6"> <!--already taken spot-->
                 <v-sheet 
                   class="pa-4 bg-blue-grey-lighten-4 d-flex align-center justify-center"
@@ -118,7 +118,16 @@
           Confirm Booking
         </v-btn>
 
-        <div :style="{visibility: this.validBooking ? 'visible' : 'hidden'}" class="text-green font-weight-bold text-center"> {{validBooking}}</div>  
+        <div :style="{visibility: this.validBooking ? 'visible' : 'hidden'}" class="text-green font-weight-bold text-center mb-8"> {{validBooking}}</div>  
+        <v-divider></v-divider>
+        <div> 
+        <p class="font-weight-bold text-center mt-4 mb-4 text-decoration-underline"> Legend </p> 
+
+        <div width="10px" class="bg-indigo-lighten-1 pb-2 pt-2 text-center mb-2 font-weight-bold"> Available Spot </div>
+        <div width="10px" class="bg-light-green-lighten-3 pb-2 pt-2 text-center mb-2 font-weight-bold"> Free Spot </div>
+        <div width="10px" class="bg-blue-grey-lighten-4 pb-2 pt-2 text-center mb-2 font-weight-bold"> Unavailable Spot </div>
+        
+        </div>
      
       </v-card>
     </div>

@@ -196,12 +196,12 @@ export default {
     const endDate = ref(new Date())
 
     const startTime = ref({
-      hours: new Date().getHours(),
+      hours: new Date().getHours() + 1,
       minutes: 0
     })
 
     const endTime = ref({
-      hours: new Date().getHours(),
+      hours: new Date().getHours() + 1,
       minutes: 30
     })
 
