@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex flex-row">
-      <div id="map">
+      <div @click="handlePreferred" id="map">
         {{ map }}
       </div>
       <div class="pl-5">
@@ -12,10 +12,10 @@
           <li
             class="text-center"
             style="list-style-type: none"
-            :key="preferredUniLot.name"
+            :key="preferredUniLot.lotName"
             v-if="preferredUniLot.selected"
           >
-            {{ preferredUniLot.name }}
+            {{ preferredUniLot.lotName }}
           </li>
         </template>
       </div>
@@ -25,12 +25,13 @@
 
 <script>
 import { Loader } from '@googlemaps/js-api-loader'
+import api from '../../axiosconfig'
 
 export default {
   name: 'map',
   data: () => ({
     loader: new Loader({
-      apiKey: 'AIzaSyDuHy8C5Ytl2WteCOo2xeE1ke6kOgRNRyA' //api key required
+      apiKey: //api key required
     }),
     mapOptions: {
       center: {
@@ -49,24 +50,7 @@ export default {
       lat: 43.473,
       lng: -80.5395
     },
-    uwLots: [
-      {
-        name: 'DC',
-        position: { lat: 43.4728963547522, lng: -80.54174093668153 },
-        selected: false
-      },
-      {
-        name: 'QNC',
-        position: { lat: 43.4712, lng: -80.544 },
-        selected: false
-      },
-
-      {
-        name: 'SLC',
-        position: { lat: 43.4719, lng: -80.5454 },
-        selected: false
-      }
-    ]
+    uwLots: []
   }),
 
   methods: {
@@ -77,27 +61,39 @@ export default {
         const lot = document.createElement('div')
 
         lot.className = 'lot-style'
-        lot.textContent = data.name
+        lot.textContent = data.lotName
 
         const marker = new AdvancedMarkerElement({
           map,
-          position: data.position,
+          position: {lat: data.latitude, lng: data.longitude},
           content: lot
         })
 
         marker.addListener('click', () => {
           this.uwLots[index].selected = !this.uwLots[index].selected
-          lot.style.backgroundColor = this.uwLots[index].selected ? '#52b788' : '#4285F4'
-          lot.style.borderTopColor = this.uwLots[index].selected ? '#52b788' : '#4285F4'
+          lot.style.backgroundColor = this.uwLots[index].selected ? '#52b788' : '#4285F4';
+          lot.style.borderTopColor = this.uwLots[index].selected ? '#52b788' : '#4285F4';
         })
       })
+    },
+    handlePreferred() {
+      const preferred = this.uwLots.filter((lot) => lot.selected).map((lot) => lot.lotName);
+      this.$emit('update-preferred', preferred);
     }
   },
-  async mounted() {
+  async created() {
     const { Map } = await this.loader.importLibrary('maps')
     const { AdvancedMarkerElement } = await this.loader.importLibrary('marker')
 
+    api.get('/lots').then((res) => {
+      this.uwLots = res.data.map((obj) => {
+        return {
+          ...obj,           
+          selected: false 
+        }
+    })
     this.initMap(Map, AdvancedMarkerElement)
+    });
   }
 }
 </script>
