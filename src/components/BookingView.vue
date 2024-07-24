@@ -8,7 +8,6 @@
       icon="fa: fas fa-arrow-right fa-rotate-180"
       @click="this.$router.push('/home')"
     ></v-btn>
-
     <div class="d-flex flex-row h-100">
       <v-card variant="text" class="mr-10" width="1000">
         <div class="text-h6 font-weight-bold">Available Lots</div>
@@ -16,10 +15,11 @@
           Search through available lots and book a specific spot
         </div>
 
+
         <v-card class="mx-auto overflow-y-auto" variant="text" style="height: 550px">
           <v-list>
             <v-list-item
-              v-for="(item, i) in items"
+              v-for="(item, i) in availableLots"
               :key="i"
               :value="item"
               @click="
@@ -27,7 +27,7 @@
                 chosenSpot = ''
               "
             >
-              <v-list-item-title v-text="item.name"></v-list-item-title>
+              <v-list-item-title v-text="item.likeNum"></v-list-item-title>
             </v-list-item>
           </v-list>
         </v-card>
@@ -37,20 +37,28 @@
         <v-card variant="outlined" class="pa-4 mb-10" width="700" height="750">
           <v-container>
             <v-row justify="center" v-for="n in selectedLot.spots" :key="n">
-              <v-col v-if="n > 2" cols="6">
-                <v-sheet
+              <v-col v-if="!n.available" cols="6"> <!--already taken spot-->
+                <v-sheet 
                   class="pa-4 bg-blue-grey-lighten-4 d-flex align-center justify-center"
-                  @click="chosenSpot = n"
                 >
-                  {{ n }}
+                  {{ n.sid }}
                 </v-sheet>
               </v-col>
-              <v-col v-else cols="6">
+              <v-col v-else-if="n.parkingType == 'free'" cols="6"><!--free spot-->
+                <v-sheet 
+                  class="pa-4 bg-light-green-lighten-3 d-flex align-center justify-center"
+                   @click="chosenSpot = n"
+                >
+                  {{ n.sid }}
+                  
+                </v-sheet>
+              </v-col>
+              <v-col v-else cols="6"> <!--default spot-->
                 <v-sheet
-                  class="pa-4 bg-light-blue-lighten-2 d-flex align-center justify-center"
+                  class="pa-4 bg-indigo-lighten-1 d-flex align-center justify-center"
                   @click="chosenSpot = n"
                 >
-                  {{ n }}
+                  {{ n.sid }}
                 </v-sheet>
               </v-col>
             </v-row>
@@ -87,13 +95,14 @@
           </div>
           <div class="text-center 50px;">
             <p class="font-weight-bold">Spot</p>
-            <p>{{ chosenSpot }}</p>
+            <p>{{ chosenSpot.sid }}</p>
           </div>
         </div>
 
         <div class="mb-6">
           <p class="font-weight-bold mb-1">Additional Details</p>
-          {{ selectedLot.description }}
+            <p v-show="`${chosenSpot.parkingType}` == 'pay'"> Price: ${{chosenSpot.price}} </p>
+            <p v-show="`${chosenSpot.parkingType}` == 'free'"> Free </p>
         </div>
 
         <v-btn class="mb-8 black-button" variant="tonal" @click.prevent="makeBooking()" block>
@@ -111,8 +120,24 @@
 import api from '../../axiosconfig'
 
 export default {
-  mounted() {
-    this.countBookings = parseInt(this.$route.query.countBookings, 10)
+
+  data: () => ({
+    selectedLot: 1,
+    countBookings: 0,
+    availableLots: [],
+    startDate: '',
+    startTimeHours: '',
+    startTimeMinutes: '',
+    endDate: '',
+    endTimeHours: '',
+    endTimeMinutes: '',
+    chosenSpot: '',
+    maxBookings: false
+  }),
+    created() {
+    const data = JSON.parse(this.$route.query.availableLots);
+    this.availableLots = data.available_lots;
+        this.countBookings = parseInt(this.$route.query.countBookings, 10)
     this.startDate = this.$route.query.startDate
     this.startTimeHours = this.$route.query.startTimeHours
     this.startTimeMinutes =
@@ -127,50 +152,17 @@ export default {
         ? '0' + `${this.$route.query.endTimeMinutes}`
         : `${this.$route.query.endTimeMinutes}`
   },
-  data: () => ({
-    selectedLot: 1,
-    countBookings: 0,
-    items: [
-      {
-        name: 'DC',
-        lid: 1,
-        spots: 4,
-        description: 'Free'
-      },
-      {
-        name: 'OPT',
-        lid: 2,
-        spots: 5,
-        description: 'Permit required'
-      },
-      {
-        name: 'DWE',
-        lid: 3,
-        spots: 7,
-        description: '$5 per entry'
-      }
-    ],
-    startDate: '',
-    startTimeHours: '',
-    startTimeMinutes: '',
-    endDate: '',
-    endTimeHours: '',
-    endTimeMinutes: '',
-    chosenSpot: '',
-    maxBookings: false
-  }),
-
   methods: {
     makeBooking() {
       const parseStart = this.startDate.split(' ')
       const parseEnd = this.endDate.split(' ')
 
-      if (this.countBookings + 1 <= 3) {
+      // if (this.countBookings + 1 <= 3) {
         api
           .post('makeBooking', {
             uid: this.$route.query.uid,
             lid: this.selectedLot.lid,
-            sid: this.chosenSpot,
+            sid: this.chosenSpot.sid,
             startYear: parseStart[2],
             startMonth:
               new Date(`${parseStart[0]} ${parseStart[1]}, ${parseStart[2]}`).getMonth() + 1,
@@ -187,12 +179,13 @@ export default {
           .catch((err) => {
             console.log(err)
           })
-      }
-      else {
-        this.maxBookings = true;
-      }
-    }
-  }
+      // }
+      // else {
+      //   this.maxBookings = true;
+      // }
+    },
+  },
+
 }
 </script>
 

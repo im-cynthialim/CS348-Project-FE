@@ -57,7 +57,7 @@
 
         <div class="d-flex flex-row">
           <div>
-            <v-card variant="outlined" class="pa-4 mb-10" width="700" height="800">
+            <v-card variant="outlined" class="pa-4 mb-10" width="700" height="830">
               <!-- permit spot end date can't be more than 7 days from today-->
               <div class="pa-4 d-flex flex-row">
                 <div>
@@ -140,10 +140,18 @@
                   </div>
                 </div>
               </div>
+               <v-checkbox
+                class="align-end d-flex"
+                v-model="freeLots"
+                color="#4285F4"
+                label="Free parking only"
+              ></v-checkbox>
               <div class="pa-3">
                 <div class="text-h6">Preferred Lot Locations</div>
-                <MapView class="mx-auto mt-0 pb-2"></MapView>
+                <MapView @update-preferred="updatePreferred" class="mx-auto mt-0 pb-2"></MapView>
               </div>
+              <div v-show="errorMsg" class="text-red font-weight-bold text-center"> {{errorMsg}}</div>  
+              
               <v-btn
                 class="mb-8 rounded-lg black-button"
                 variant="tonal"
@@ -152,6 +160,7 @@
               >
                 Find available lots
               </v-btn>
+              
             </v-card>
           </div>
         </div>
@@ -197,7 +206,10 @@ export default {
   data: () => ({
     selected: [],
     upcomingBookings: [],
-    countBookings: 0
+    countBookings: 0,
+    preferredLots: [],
+    errorMsg: null,
+    freeLots: false,
   }),
   mounted() {
     api
@@ -208,23 +220,51 @@ export default {
       })
   },
   methods: {
+    updatePreferred(data) {
+      this.preferredLots = data;
+    },
     navProfile() {
       this.$router.push('/profile')
     },
     navBooking() {
-      this.$router.push({
-        path: '/booking',
-        query: {
-          startDate: `${this.startDate.toLocaleString('en-us', { month: 'long' })} ${this.startDate.getDate()} ${this.startDate.getFullYear()}`,
-          endDate: `${this.endDate.toLocaleString('en-us', { month: 'long' })} ${this.endDate.getDate()} ${this.endDate.getFullYear()}`,
-          startTimeHours: this.startTime.hours,
-          startTimeMinutes: this.startTime.minutes,
-          endTimeHours: this.endTime.hours,
-          endTimeMinutes: this.endTime.minutes,
-          countBookings: this.countBookings,
-          uid: 4 //TBD
-        }
+      api.post('listAvailableSpots', {
+          "uid": 1,
+          "location": this.preferredLots,
+          "freeOnly": this.freeLots,
+          "startYear": `${this.startDate.getFullYear()}`,
+          "startMonth": `${this.startDate.getMonth()}`.length != 2 ? "0" + `${this.startDate.getMonth()}` : this.startDate.getMonth(),
+          "startDate": `${this.startDate.getDate()}`,
+          "startHour": `${this.startTime.hours}`,
+          "startMinute": `${this.startTime.hours}`,
+          "endYear": this.endDate.getFullYear(),
+          "endMonth": `${this.endDate.getMonth()}`.length != 2 ? "0" + `${this.endDate.getMonth()}` : this.endDate.getMonth(),
+          "endDate": `${this.startDate.getDate()}`,
+          "endHour": `${this.endTime.hours}`,
+          "endMinute": `${this.endTime.minutes}`,
       })
+      .then((res) => {
+          this.$router.push({
+            path: '/booking',
+            query:{
+              uid: 1,
+              availableLots: JSON.stringify(res.data),
+              startDate: `${this.startDate.toLocaleString('en-us', { month: 'long' })} ${this.startDate.getDate()} ${this.startDate.getFullYear()}`,
+              endDate: `${this.endDate.toLocaleString('en-us', { month: 'long' })} ${this.endDate.getDate()} ${this.endDate.getFullYear()}`,
+              startTimeHours: this.startTime.hours,
+              startTimeMinutes: this.startTime.minutes, 
+              endTimeHours: this.endTime.hours,
+              endTimeMinutes: this.endTime.minutes,
+            }
+          })
+      })
+      .catch(e => {
+          if (e.response.status === 406) {
+            this.errorMsg = "Maximum number of bookings reached, no additional bookings can be made";
+          }
+          else if (e.response.status === 404) {
+            this.errorMsg = "User not found - retry login";
+          }
+    })
     },
     cancelBooking(booking) {
       api
