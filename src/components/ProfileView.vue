@@ -22,29 +22,26 @@
                 :value="booking"
               >
                 <div class="d-flex flex-row justify-space-between">
-                 
-
                   <div class="font-weight-bold text-decoration-underline">
                     {{ booking.lotName }}
                   </div>
 
-                 <div class="d-flex flex-row ga-3 align-center">
-                  <div
-                    class="px-2"
-                    :class="booking.status == 'expired' ? 'cancelled' : 'expired'"
-                  >
-                    {{ booking.status == 'expired' ? 'completed' : booking.status }}
-                  </div>
+                  <div class="d-flex flex-row ga-3 align-center">
+                    <div
+                      class="px-2"
+                      :class="booking.status == 'expired' ? 'cancelled' : 'expired'"
+                    >
+                      {{ booking.status == 'expired' ? 'completed' : booking.status }}
+                    </div>
 
                     <img
-                    v-if="booking.status == 'expired'"
-                    style="right: 0; top: 0"
-                    width="20"
-                    :src="booking.liked ? liked : unliked"
-                    @click="booking.liked = true"
-                  />
-
-                </div>
+                      v-if="booking.status == 'expired'"
+                      style="right: 0; top: 0"
+                      width="20"
+                      :src="booking.liked ? liked : unliked"
+                      @click="booking.liked = true"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -81,13 +78,16 @@ export default {
     bookingHistory: [],
     unliked: unliked,
     liked: liked,
+    uid: null
   }),
   mounted() {
-      api.post('bookingHistory',
-      {
-        uid: 4,
-      }).then((res) => {
-        this.bookingHistory = res.data.filter((booking) => booking.status != "booked");
+  
+    api
+      .post('bookingHistory', {
+        uid: JSON.parse(sessionStorage.getItem('uid'))
+      })
+      .then((res) => {
+        this.bookingHistory = res.data.filter((booking) => booking.status != 'booked')
       })
   },
   methods: {
