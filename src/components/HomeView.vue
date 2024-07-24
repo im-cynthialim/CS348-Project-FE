@@ -6,7 +6,7 @@
       size="x-large"
       color="#4285F4"
       icon="fa: fas fa-gear"
-      @click="navProfile()"
+      @click="this.$router.push('/profile')"
     ></v-btn>
 
     <v-btn
@@ -25,6 +25,13 @@
             class="d-flex flex-column pa-6 rounded-t-lg rounded-0 upcoming-bookings"
             variant="outlined"
           >
+            <div
+                class="px-2 position-absolute right-0 mr-5" 
+                :style="{visibility: [0, 1, 2, 3, 4].includes(this.uid) ? `visible` : `hidden`}"
+                :class="booking.uid == this.uid ? 'admin' : 'user'"
+              >
+              {{booking.uid == this.uid ? "admin" : "user"}}
+              </div>
             <div class="mb-1 d-flex justify-space-between">
               <p class="font-weight-bold text-decoration-underline">{{ booking.lotName }}</p>
             </div>
@@ -62,7 +69,7 @@
               <div class="pa-4 d-flex flex-row">
                 <div>
                   <div class="text-h6 pb-3">Parking Date and Time</div>
-
+  
                   <div class="d-flex flex-row mb-4">
                     <div class="mr-4">
                       Start Date
@@ -227,14 +234,10 @@ export default {
       .get(`upcomingBookings?uid=${this.uid}`)
       .then((res) => {
         this.upcomingBookings = res.data
-        this.countBookings = res.data.length
       })
     },
     updatePreferred(data) {
       this.preferredLots = data;
-    },
-    navProfile() {
-      this.$router.push('/profile')
     },
     navBooking() {
       api.post('listAvailableSpots', {
@@ -277,8 +280,15 @@ export default {
     })
     },
     cancelBooking(booking) {
+      var rmUid;
+      if (this.uid == booking.uid) { // admin booking
+        rmUid = this.uid;
+      }
+      else {
+        rmUid = booking.uid;
+      }
       api
-        .delete(`cancelBooking?uid=${this.uid}&bid=${booking.bid}`, {})
+        .delete(`cancelBooking?uid=${rmUid}&bid=${booking.bid}`, {})
         .then(this.listUpcomingBookings())
         .catch((err) => {
           console.log(err)
@@ -298,7 +308,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .black-button {
   background-color: black;
   color: white;
@@ -316,5 +326,13 @@ export default {
 .input-slot-image {
   margin-left: 15px;
   height: 12px;
+}
+
+.admin {
+  background-color: #FFAB91;
+}
+
+.user {
+  background-color: #BBDEFB;
 }
 </style>
