@@ -41,7 +41,7 @@
                     >
                       {{ booking.status == 'expired' ? 'completed' : booking.status }}
                     </div>
-                    <div v-if="booking.liked" class="mr-2"> {{booking.likeNum}} </div>
+                    <div v-if="booking.status == 'expired'" class="mr-2"> {{booking.likeNum}} </div>
 
                     <img
                       v-if="booking.status == 'expired'"

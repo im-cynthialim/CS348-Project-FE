@@ -22,7 +22,8 @@
         <div class="text-h6 font-weight-bold mb-2">Upcoming</div>
         <div v-for="booking in upcomingBookings" :key="booking.bid">
           <v-card
-            class="d-flex flex-column pa-6 rounded-t-lg rounded-0 upcoming-bookings"
+            class="d-flex flex-column pa-6 mx-0 rounded-t-lg rounded-0"
+            :style="{width: upcomingBookings.length > 2 ? '235px': '250px'}"
             variant="outlined"
           >
             <div
@@ -50,7 +51,7 @@
             </div>
           </v-card>
           <v-btn
-            class="mb-8 rounded-b-lg rounded-0 black-button"
+            class="mb-8 black-button rounded-b-lg rounded-0"
             variant="tonal"
             block
             @click="cancelBooking(booking)"
@@ -312,10 +313,7 @@ export default {
 .black-button {
   background-color: black;
   color: white;
-}
-
-.upcoming-bookings {
-  width: 250px;
+  width: 1000px;
 }
 
 .dates {
