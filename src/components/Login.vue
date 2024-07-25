@@ -1,6 +1,7 @@
 <template>
   <div class="login">
-    <p class="text-h3 font-weight-bold text-center mt-16 pt-16 mb-16">Welcome.</p>
+    <p class="text-h3 font-weight-bold text-center mt-16 pt-16">Welcome to <span class="text-h3 font-weight-bold text-blue mt-16 pt-16 mb-16">KW</span>IK Park</p>
+    <p class="font-italic text-center mb-16 mt-4"> Quickly find and reserve parking spots within the Kitchener-Waterloo region </p>
 
     <v-card class="card-margin pa-16 pb-8" variant="text">
       <div class="text-subtitle-1 text-medium-emphasis d-flex">Username</div>
@@ -55,8 +56,8 @@ export default {
     return {
       show1: false,
       show2: true,
-      username: "admin01",
-      password: "iamadmin",
+      username: "",
+      password: "",
       errorMsg: false,
       rules: {
         required: (value) => !!value || 'Required.',
