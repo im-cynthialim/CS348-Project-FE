@@ -65,7 +65,7 @@
 
         <div class="d-flex flex-row">
           <div>
-            <v-card variant="outlined" class="pa-4 mb-10" width="700" height="830">
+            <v-card variant="outlined" class="pa-4 mb-10" width="700" height="850">
               <!-- permit spot end date can't be more than 7 days from today-->
               <div class="pa-4 d-flex flex-row">
                 <div>
@@ -290,7 +290,7 @@ export default {
       }
       api
         .delete(`cancelBooking?uid=${rmUid}&bid=${booking.bid}`, {})
-        .then(this.listUpcomingBookings())
+        .then(() => {this.listUpcomingBookings()})
         .catch((err) => {
           console.log(err)
         })
