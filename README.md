@@ -22,10 +22,12 @@ npm install
 npm run dev
 ```
 
-### Currently supported features
+### Features
 
-- Make a booking (located in BookingView)
-- Cancel booking (located in HomeView)
-- View booking history (located in ProfileView)
+- Make a booking
+- Cancel a booking + admin privileges for cancelling users' bookings
+- View and sort booking history
+- Liking a parking lot
+- User login + registration
 
 ### Note: google maps API key required for map functionality

@@ -42,8 +42,8 @@
       </v-card>
 
       <div class="d-flex">
-        <v-card variant="outlined" class="pa-4 mb-10" width="700" height="750">
-          <v-container>
+        <v-card variant="outlined" class=" overflow-y-auto pa-4 mb-10" width="700" height="750">
+          <v-container >
             <v-row justify="center" v-for="n in selectedLot.spots" :key="n" @click="errorMsg = false; validBooking = false">
               <v-col v-if="!n.available" cols="6"> <!--already taken spot-->
                 <v-sheet 
